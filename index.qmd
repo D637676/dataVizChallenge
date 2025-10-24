@@ -109,7 +109,47 @@ Our purpose is to investigate whether Coors Field in Denver, Colorado is truly t
 
 **Question 1: Hypothesis Formation**
 - Why might high altitude affect baseball performance?  Is Coors Field affected by high altitude?
+
+**Answer:**
+
+High altitude affects baseball performance primarily because the air is thinner. This has several impacts:
+
+1.  **Less air resistance:** The baseball travels faster and further with less air resistance. This is especially true for batted balls, leading to more home runs and extra-base hits.
+2.  **Less movement on pitches:** Pitches like curveballs and sliders rely on air resistance to create their movement. In thinner air, these pitches have less break, making them easier for hitters to hit.
+3.  **Physiological effects:** Some players may experience fatigue or shortness of breath due to the lower oxygen levels at high altitude, although professional athletes are generally well-conditioned.
+
+Yes, Coors Field in Denver, Colorado, is significantly affected by high altitude. Denver is located over a mile above sea level, making Coors Field the highest-altitude ballpark in Major League Baseball. This is why it's often considered a "hitter's park" due to the increased number of runs and home runs scored there.
+
+Below analysis investigates whether the matches held in 2010 and 2021 provide evidence to support the hypothesis.
+
 :::
+
+```{python}
+# Calculate total runs for each game in 2010
+df2010['totalRuns'] = df2010['homeScore'] + df2010['visScore']
+
+# Group by home team and calculate the average total runs
+avg_runs_2010 = df2010.groupby('home')['totalRuns'].mean()
+
+# Get the top 5 highest scoring fields in 2010
+top_5_2010 = avg_runs_2010.sort_values(ascending=False).head()
+
+print("Top 5 highest scoring fields in 2010:")
+print(top_5_2010)
+# Calculate total runs for each game in 2010
+df2021['totalRuns'] = df2021['homeScore'] + df2021['visScore']
+
+# Group by home team and calculate the average total runs
+avg_runs_2021 = df2021.groupby('home')['totalRuns'].mean()
+
+# Get the top 5 highest scoring fields in 2010
+top_5_2021 = avg_runs_2021.sort_values(ascending=False).head()
+
+print("\nTop 5 highest scoring fields in 2021:")
+print(top_5_2021)
+```
+**COL was the top-scoring field in 2010; however, BOS scored the most runs in 2021. Although the data doesn’t show a clear pattern, we can see that COL ranks among the top five scoring fields in both years. We will analyze further to conclude this hypothesis.**
+
 
 ## Stage 2: Curation of Content
 
@@ -153,7 +193,17 @@ print(avgDF_2021.head())
 
 **Question 1: Data Aggregation Strategy**
 - How many games are in the dataset? Why do we aggregate individual games into stadium averages before we start the visualization process?
+
+**Answer:**
+
+There are 2430 games in the `df2010` dataset and 2429 games in the `df2021` dataset. We can see this information by looking at the shape of the dataframes:
 :::
+```{python}
+print("2010 data shape:", df2010.shape)
+print("2021 data shape:", df2021.shape)
+```
+We aggregate individual games into stadium averages before visualization to understand the typical scoring environment at each stadium, rather than focusing on the results of individual games. Each game has unique factors (pitchers, hitters, weather, etc.) that influence the score. By averaging the scores across all games played at a stadium, we smooth out these game-specific variations and get a more stable measure of the stadium's overall effect on scoring. This allows us to compare stadiums based on their inherent run-friendliness, which is the core question we are investigating. Visualizing individual game scores for all stadiums would be overwhelming and make it difficult to identify patterns related to the stadiums themselves.
+
 
 ## Stage 3: Structuring of Visual Mappings
 
@@ -212,9 +262,31 @@ plt.show()
 - Why is a horizontal bar chart better than a scatter plot for this data?
 - When would you choose a vertical bar chart over horizontal?
 
+**Answer:**
+
+For this data, a horizontal bar chart is better than a scatter plot because we are comparing a quantitative variable (average runs) across a set of categorical variables (stadiums).
+
+*   **Horizontal Bar Chart:** This chart type is excellent for comparing values across distinct categories when the category labels are long (like stadium names or codes). The length of each bar directly represents the average runs, making it easy to compare stadiums visually and see which ones have higher or lower averages. The horizontal orientation allows for clear labeling of each stadium.
+*   **Scatter Plot:** A scatter plot is typically used to show the relationship between two quantitative variables. While you *could* use it with a categorical variable on one axis, it's not ideal for direct comparison of the categorical values. Each stadium would just be a single point, making it harder to quickly see and compare the average run values for all stadiums. The visual emphasis is on the distribution of points rather than the precise value for each category.
+
+You would choose a vertical bar chart over a horizontal one when the category labels are short and you have many categories, or if you want to emphasize the magnitude of the values (as the y-axis often starts at zero). Vertical bar charts are also more conventional for displaying time-series data or distributions. However, for comparing many categories with potentially longer labels like stadium names, horizontal bar charts often provide better readability.
+
 **Question 2: Aesthetic Mappings**
 - What does the color highlighting accomplish in Approach 4?
 - How does position (x/y) compare to color for encoding data?
+
+**Answer:**
+
+In Approach 4, the color highlighting of the "COL" bar accomplishes the following:
+
+- **Draws Attention:** It immediately draws the viewer's eye to the bar representing Coors Field, which is the focus of the analysis.
+- **Categorical Distinction:** It visually separates Coors Field from all other stadiums, emphasizing its unique status or the hypothesis being tested.
+- **Aids Comparison:** While the position on the chart is the primary way to compare the average runs, the color highlighting makes it quicker and easier to find Coors Field and compare its value to the others.
+
+Comparing position (x/y) to color for encoding data:
+
+- **Position (x/y):** This is a fundamental and highly effective aesthetic for encoding quantitative data. Our eyes are very good at perceiving differences in position along a common scale. In the bar charts, the length of the bars (encoded by position on the x-axis for horizontal or y-axis for vertical) is the primary way we interpret the average runs. This provides a precise comparison of values.
+- **Color:** Color is better suited for encoding categorical data or for highlighting specific data points as done in Approach 4. While color gradients can be used for quantitative data, it's generally less precise for value comparison than position. Our ability to distinguish subtle differences in color or perceive exact values from a color scale is not as strong as our ability to compare lengths or positions. In this example, color is used to categorize "COL" versus "other stadiums," not to represent the quantity of runs itself.
 
 :::
 
@@ -287,6 +359,23 @@ print(f"Colorado is {((colorado_runs / avgDF_2010_sorted.totalRuns.mean()) - 1) 
 - What elements make this visualization suitable for a business presentation?
 - Is the annotation on the visualization helpful?  Can you fix its placement?
 
+**Answer:**
+
+Several elements make this visualization suitable for a business presentation:
+
+1.  **Clear and Concise Title:** The title "Colorado (COL) is the Most Run-Friendly Ballpark in 2010" is bold and directly addresses the core question, making the main takeaway immediately clear to the audience.
+2.  **Appropriate Chart Type:** A horizontal bar chart is effective for comparing categorical data (stadiums) and their corresponding values (average runs), which is suitable for presenting performance metrics.
+3.  **Axis Labels and Title:** The axes are clearly labeled ("Average Runs Per Game" and "Stadium (Home Team)") with a descriptive title, ensuring the audience understands what the chart represents.
+4.  **Highlighting:** Highlighting "COL" with a distinct color draws attention to the key subject of the analysis, making it easy for the audience to locate and focus on the relevant data point.
+5.  **Legend:** The legend explains the color coding, which is essential for understanding the highlighting.
+6.  **Annotation:** The annotation provides the exact average runs for Coors Field, offering precise data to support the visual comparison.
+7.  **Grid:** The grid lines help in reading the values more accurately across the bars.
+8.  **Professional Style:** Using a style like "seaborn-v0_8-whitegrid" provides a clean and professional aesthetic.
+
+Regarding the annotation, yes, it is helpful as it provides the exact numerical value for Coors Field, reinforcing the visual message. However, its placement could be improved. In the current visualization, the annotation text overlaps slightly with the bar itself and the arrow can be adjusted for better readability and aesthetics.
+
+To fix its placement, you could adjust the `xytext` coordinates to move the text further away from the bar and potentially change the arrow properties (`arrowprops`) to ensure it points clearly to the end of the bar without being distracting. You might also consider the alignment of the text relative to the point it's annotating.
+
 :::
 
 
@@ -314,15 +403,135 @@ comparison_data = pd.merge(
 
 ```
 
+```{python}
+# Create a comprehensive comparison visualization using the dataframe comparison_data
+
+plt.style.use("seaborn-v0_8-whitegrid")
+
+# Sort data for consistency based on 2010 runs
+comparison_data_sorted = comparison_data.sort_values('runs_2010', ascending=True).reset_index(drop=True)
+
+# Create figure and axes
+fig, ax = plt.subplots(figsize=(10, 15)) # Adjust figsize for better readability with more bars
+
+# Set the positions for the bars
+bar_height = 0.35
+y_pos = np.arange(len(comparison_data_sorted))
+
+# Create color array for highlighting Colorado for 2010 and 2021
+colors_2010 = ["darkorchid" if stadium == "COL" else "lightgrey" for stadium in comparison_data_sorted['home']]
+colors_2021 = ["darkorchid" if stadium == "COL" else "lightgrey" for stadium in comparison_data_sorted['home']]
+
+
+# Create horizontal bar charts for 2010 and 2021 side-by-side
+bars_2010 = ax.barh(y_pos - bar_height/2, comparison_data_sorted['runs_2010'], bar_height, label='2010', color=colors_2010)
+bars_2021 = ax.barh(y_pos + bar_height/2, comparison_data_sorted['runs_2021'], bar_height, label='2021', color=colors_2021)
+
+
+# Add labels and title
+ax.set_xlabel("Average Runs Per Game", fontsize=12)
+ax.set_ylabel("Stadium (Home Team)", fontsize=12)
+ax.set_title("Comparison of Average Runs Per Game by Stadium (2010 vs 2021)",
+             fontsize=16, fontweight='bold', pad=20)
+
+# Set y-axis ticks and labels
+ax.set_yticks(y_pos)
+ax.set_yticklabels(comparison_data_sorted['home'])
+
+# Add legend
+ax.legend()
+
+# Add grid
+ax.grid(True, alpha=0.3)
+
+# Optional: Add value labels to the bars for more precision
+# for bars in [bars_2010, bars_2021]:
+#     for bar in bars:
+#         width = bar.get_width()
+#         ax.annotate(f'{width:.2f}',
+#                     xy=(width, bar.get_y() + bar.get_height() / 2),
+#                     xytext=(5, 0),  # 5 points right of the tip
+#                     textcoords="offset points",
+#                     ha='left', va='center')
+
+
+plt.tight_layout()
+plt.show()
+
+
+```
+
 ::: {.callout-important}
 ## 🤔 Discussion Questions: Advanced Object-Oriented Techniques
 
 **Question 1: Using Subplot Layout**
 - Create a two-facet visualization that shows the total runs for 2010 and 2021 for each stadium in a single figure.  Highlight Colorado in the visualization.
 
+```{python}
+# Question 1: Using Subplot Layout
+# Create a two-facet visualization that shows the total runs for 2010 and 2021 for each stadium in a single figure.
+# Highlight Colorado in the visualization.
+
+plt.style.use("seaborn-v0_8-whitegrid")
+
+# Sort data for consistency based on 2010 runs
+comparison_data_sorted = comparison_data.sort_values('runs_2010', ascending=True).reset_index(drop=True)
+
+# Create figure and axes for the two facets
+fig, axes = plt.subplots(1, 2, figsize=(16, 8), sharey=True) # Share y-axis for easier comparison
+
+# Get the list of stadiums in the desired order
+stadium_order = comparison_data_sorted['home']
+
+# Function to create a single bar chart facet
+def create_stadium_runs_facet(ax, data, year, stadium_order):
+    # Create color array for highlighting Colorado
+    colorado_colors = ["darkorchid" if stadium == "COL" else "lightgrey"
+                       for stadium in data['home']]
+
+    # Use the ordered index for plotting
+    ax.barh(stadium_order, data[f'runs_{year}'], color=colorado_colors)
+
+    # Add title and labels
+    ax.set_title(f"Average Runs Per Game - {year}", fontsize=14, fontweight='bold')
+    ax.set_xlabel("Average Runs", fontsize=12)
+    if year == 2010: # Only add ylabel to the first subplot
+        ax.set_ylabel("Stadium (Home Team)", fontsize=12)
+
+    # Add grid
+    ax.grid(True, alpha=0.3)
+
+
+# Create facets for 2010 and 2021
+create_stadium_runs_facet(axes[0], comparison_data_sorted, 2010, stadium_order)
+create_stadium_runs_facet(axes[1], comparison_data_sorted, 2021, stadium_order)
+
+
+# Add a main title to the figure
+fig.suptitle("Comparison of Average Runs Per Game by Stadium (2010 vs 2021)",
+             fontsize=18, fontweight='bold', y=1.02) # Adjust y for spacing
+
+# Add a legend to the figure
+colorado_bar = plt.Rectangle((0,0),1,1, color="darkorchid", label="Colorado Rockies")
+other_bar = plt.Rectangle((0,0),1,1, color="lightgrey", label="Other Stadiums")
+fig.legend(handles=[colorado_bar, other_bar], loc='upper right', bbox_to_anchor=(0.9, 0.95), frameon=True)
+
+
+plt.tight_layout()
+plt.show()
+
+```
+
 **Question 2: Explanation of the Visualization**
 - Ask AI To Add A Paragraph Here To Explain The Visualization
 - Does AI come to the right conclusion?  If not, why not?
+
+**Answer:**
+
+The visualization above compares the average runs per game for each MLB stadium in the 2010 and 2021 seasons. The horizontal bar charts allow for easy comparison of run averages across different stadiums, with the stadiums ordered by their average runs in 2010. Coors Field (COL) is highlighted in purple to draw attention to its performance in both years. In 2010, Coors Field clearly had the highest average runs per game. However, in 2021, while still among the highest, it is no longer the top stadium, with Boston (BOS) showing a slightly higher average. This suggests that while Coors Field consistently ranks as one of the most run-friendly ballparks, its relative standing can change from year to year, and other factors or team performance can influence which stadium has the highest average runs in a given season.
+
+Based on the data presented in the visualization, the initial AI conclusion that "Colorado (COL) is the Most Run-Friendly Ballpark in 2010" is supported by the 2010 data. However, the broader implication that Coors Field is consistently *the* most run-friendly ballpark across different years is not fully supported, as the 2021 data shows Boston with a slightly higher average. Therefore, while Coors Field is consistently one of the most run-friendly, the AI's initial conclusion should be qualified to specify the year or acknowledge that other stadiums can surpass it in certain seasons.
+
 :::
 
 ## Student Analysis Section: Mastering Object-Oriented Matplotlib {#student-analysis-section}
